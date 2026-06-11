@@ -1,0 +1,11 @@
+[Unit]
+Description=Keyheatmap Daemon
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/keyheatmap-daemon
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
