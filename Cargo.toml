@@ -1,6 +1,6 @@
 [package]
 name = "keyheatmap"
-version = "1.0.2"
+version = "1.0.3"
 edition = "2024"
 
 authors = ["Jan Luca Oster <janluca.oster@proton.me>"]
