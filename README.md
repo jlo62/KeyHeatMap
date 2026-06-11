@@ -28,6 +28,8 @@ This will create `keyheatmap_count.svg` and `keyheatmap_time.svg`. No runtime co
 
 Repeats aren't counted, and the mouse scroll bindings use other keys, so beware if `KEY_SCROLLUP` does weird stuff.
 
+Also, clamps/highest numbers are counted separately for the mouse and the keyboard.
+
 You can edit `resources/template.svg` with inkscape if the layout or so is wrone. Then convert the inkscape names to ids with the [Label To Id Plugin](https://gitlab.com/inklinea/label-to-id) and export as a plain SVG to `resources/template_plain.svg`.
 Alternatively you can also directly edit the SVG file.
 

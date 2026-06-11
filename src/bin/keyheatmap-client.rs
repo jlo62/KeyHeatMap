@@ -1,5 +1,6 @@
 use keyheatmap::*;
 
+use evdev::KeyCode;
 use tokio::fs;
 use xmltree::{Element, XMLNode};
 
@@ -9,27 +10,28 @@ static TEMPLATE: &str = include_str!(r"../../resources/template_plain.svg");
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let map = load_hashmap().await;
 
-    let mut highest_count = 0;
-    let mut highest_time = 0;
+    let mut highest_count = [0, 0];
+    let mut highest_time = [0, 0];
 
-    for value in map.values() {
-        if value.count > highest_count {
-            highest_count = value.count
+    for (key, value) in &map {
+        let idx = is_mouse(key) as usize;
+        if value.time_ms > highest_time[idx] {
+            highest_time[idx] = value.time_ms
         }
-        if value.time_ms > highest_time {
-            highest_time = value.time_ms
+        if value.count > highest_count[idx] {
+            highest_count[idx] = value.count
         }
     }
 
     println!(
-        "highest count: {}x\nhighest time: {}.{}s",
-        highest_count,
-        highest_time / 1000,
-        highest_time % 1000
+        "highest count:         {}x\nhighest count (mouse): {}x\nhighest time:          {}.{}s\nhighest time (mouse):  {}.{}s",
+        highest_count[0],
+        highest_count[1],
+        highest_time[0] / 1000,
+        highest_time[0] % 1000,
+        highest_time[1] / 1000,
+        highest_time[1] % 1000,
     );
-
-    let highest_count = highest_count as f32;
-    let highest_time = highest_time as f32;
 
     //let svg = fs::read_to_string("template_plain.svg")?;
     let mut root1 = Element::parse(TEMPLATE.as_bytes())?;
@@ -49,10 +51,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
+    let highest_count: [f32; 2] = highest_count.map(|x| x as f32);
+    let highest_time: [f32; 2] = highest_time.map(|x| x as f32);
+
     for (key, value) in &map {
         let key_str = format!("{:?}", key);
-        let count_f32 = value.count as f32 / highest_count;
-        let time_f32 = value.time_ms as f32 / highest_time;
+        let idx = is_mouse(key) as usize;
+
+        let count_f32 = value.count as f32 / highest_count[idx];
+        let time_f32 = value.time_ms as f32 / highest_time[idx];
         set_path_fill(&mut root1, key_str.as_str(), count_f32);
         set_path_fill(&mut root2, key_str.as_str(), time_f32);
     }
@@ -70,6 +77,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+fn is_mouse(key: &KeyCode) -> bool {
+    [
+        KeyCode::BTN_LEFT,
+        KeyCode::BTN_RIGHT,
+        KeyCode::BTN_MIDDLE,
+        KeyCode::BTN_SIDE,
+        KeyCode::BTN_EXTRA,
+        KeyCode::KEY_SCROLLUP,
+        KeyCode::KEY_SCROLLDOWN,
+        KeyCode::KEY_KPLEFTPAREN,
+        KeyCode::KEY_KPRIGHTPAREN,
+    ]
+    .contains(key)
+}
+
 fn set_path_fill(elem: &mut Element, target_id: &str, opacity: f32) {
     if elem.name == "path" && elem.attributes.get("id").map(String::as_str) == Some(target_id) {
         elem.attributes.insert(
@@ -85,7 +107,7 @@ fn set_path_fill(elem: &mut Element, target_id: &str, opacity: f32) {
     }
 }
 
-fn find_by_id_mut<'a>(elem: &'a mut Element, append: &str) -> bool {
+fn find_by_id_mut(elem: &mut Element, append: &str) -> bool {
     if elem.attributes.get("id").map(String::as_str) == Some("title") {
         elem.children.push(XMLNode::Text(append.into()));
         return true;
