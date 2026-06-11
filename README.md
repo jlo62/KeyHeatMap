@@ -7,7 +7,7 @@ A little tool that counts how often and how long you press which key.
 ## Compiling and running the daemon
 
 ```
-cargo br
+cargo build --release
 sudo cp target/release/keyheatmap-{client,daemon} /usr/local/bin
 sudo cp resources/keyheatmap-daemon.service /etc/systemd/system
 systemctl enable --now keyheatmap-daemon
@@ -20,7 +20,7 @@ Use the `--now` -- otherwise the first thing that is logged is which keys are ne
 keyheatmap-client
 ```
 
-This will create `keyheatmap_count.svg` and `keyheatmap_time.svg`.
+This will create `keyheatmap_count.svg` and `keyheatmap_time.svg`. No runtime configuration is possible.
 
 ## Misc
 
