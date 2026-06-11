@@ -1,10 +1,12 @@
 # KeyHeatMap
 
-A little tool that counts how often and how long you press which key.
+A little tool that counts how often and how long you press which key on linux.
 
 ![count](images/keyheatmap_count.svg) ![time](images/keyheatmap_time.svg)
 
 ## Compiling and running the daemon
+
+This tool probably requires linux, as it uses evdev and udev.
 
 ```
 cargo build --release

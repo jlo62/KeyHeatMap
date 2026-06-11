@@ -1,7 +1,18 @@
 [package]
 name = "keyheatmap"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
+
+authors = ["Jan Luca Oster <janluca.oster@proton.me>"]
+license = "MIT"
+readme = "README.md"
+
+description = "A little tool that counts how often and how long you press which key on linux."
+
+keywords = ["keyboard", "mouse", "keylogger", "cli", "analysis"]
+categories = ["command-line-utilities"]
+
+repository = "https://github.com/jlo62/KeyHeatMap"
 
 [dependencies]
 anyhow = "1.0.102"
