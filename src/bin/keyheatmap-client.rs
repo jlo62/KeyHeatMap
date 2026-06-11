@@ -37,8 +37,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut root1 = Element::parse(TEMPLATE.as_bytes())?;
     let mut root2 = root1.clone();
 
-    find_by_id_mut(&mut root1, "(# of presses)");
-    find_by_id_mut(&mut root2, "(time)");
+    find_by_id_mut(&mut root1, " (# of presses)");
+    find_by_id_mut(&mut root2, " (time)");
 
     if root1.attributes.get("id").map(String::as_str) == Some("BG") {
         for child in &mut root1.children {
